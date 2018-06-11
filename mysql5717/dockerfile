@@ -1,0 +1,4 @@
+FROM mysql:5.7.17
+MAINTAINER Michaelrs <michaelrs.xie@gmail.com>
+
+ENV TZ "Asia/Shanghai"

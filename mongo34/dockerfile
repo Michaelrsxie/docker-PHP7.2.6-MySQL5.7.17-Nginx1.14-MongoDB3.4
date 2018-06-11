@@ -1,0 +1,15 @@
+FROM centos:latest
+MAINTAINER Michaelrs <michaelrs.xie@gmail.com>
+
+ENV TZ "Asia/Shanghai"
+
+RUN yum -y update && yum clean all
+
+RUN echo -e "[mongodb-org-3.4] \nname=MongoDB Repository \nbaseurl=https://repo.mongodb.org/yum/redhat/6/mongodb-org/3.4/x86_64/ \ngpgcheck=1 \nenabled=1 \ngpgkey=https://www.mongodb.org/static/pgp/server-3.4.asc" > /etc/yum.repos.d/mongodb-org-3.4.repo
+
+RUN yum install -y mongodb-org && \
+    yum clean all
+
+EXPOSE 27017
+
+CMD ["mongod", "-f", "/etc/mongod.conf"]

@@ -1,0 +1,74 @@
+version : '3'
+services :
+    mysql5717 :
+        container_name : mysql5717
+        build :
+            context : ./mysql5717
+            dockerfile : dockerfile
+        ports :
+            - "3306:3306"
+        volumes :
+            - ./mysql5717/data:/var/lib/mysql
+            - ./mysql5717/conf/my.cnf:/etc/mysql/my.cnf:ro
+            - ./mysql5717/conf/mysqld.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf:ro
+            - ./mysql5717/logs:/var/log/mysql
+        networks :
+            - backend
+        #初始密码
+        environment :
+            - MYSQL_ROOT_PASSWORD=123456
+        restart : always
+    php726 :
+        container_name : php726
+        build :
+            context : ./php726
+            dockerfile : dockerfile
+        ports :
+            - "9000:9000"
+        volumes :
+            # - ~/Sites:/usr/local/nginx/html
+            - ./php726/logs:/usr/local/php7/var/log
+            - ./php726/conf/php.ini:/usr/local/php7/lib/php.ini:ro
+        networks :
+            - frontend
+            - backend
+        links :
+            - mysql5717
+            - mongo34
+        restart : always
+    nginx114 :
+        container_name : nginx114
+        build :
+            context : ./nginx114
+            dockerfile : dockerfile
+        ports :
+            - "80:80"
+            - "433:433"
+        volumes :
+            - ./nginx114/logs:/usr/local/nginx/logs
+            # - ~/Sites:/usr/local/nginx/html
+            - ./nginx114/conf/nginx.conf:/usr/local/nginx/conf/nginx.conf:ro
+            - ./nginx114/conf/vhost:/usr/local/nginx/conf/vhost:ro
+        networks :
+            - frontend
+        links :
+            - php726
+        restart : always
+    mongo34 :
+        container_name : mongo34
+        build :
+           context : ./mongo34
+           dockerfile : dockerfile
+        ports :
+            - "27017:27017"
+        volumes :
+            - ./mongo34/data:/var/lib/mongo
+            - ./mongo34/logs:/var/log/mongodb
+            - ./mongo34/conf/mongod.conf:/etc/mongod.conf:ro
+        networks :
+            - backend
+        restart : always
+
+networks :
+    frontend :
+    backend :
